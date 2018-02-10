@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Notes</h1>
+    {% for post in posts %}
+    <p><b>{{ post.author.username }} [{{ post.timestamp.strftime('%Y-%m-%d %H:%M') }}]</b> - {{ post.body }}</p>
+    {% endfor %}
+    <hr>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.body(size=32) }}
+            {% for error in form.body.errors %}
+            <br><span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+            {{ form.submit() }}
+        </p>
+    </form>
+{% endblock %}
