@@ -47,7 +47,7 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 @app.route('/notes', methods=['GET', 'POST'])
 @login_required
 def notes():
