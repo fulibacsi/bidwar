@@ -1,1 +1,1 @@
-web: gunicorn app:bidwar --log-file=-
+web: gunicorn bidwar:app --log-file=-
