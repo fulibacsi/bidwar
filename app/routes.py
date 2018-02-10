@@ -20,7 +20,6 @@ from app.forms import AddNote
 from app.forms import LoginForm
 
 
-@app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -48,6 +47,7 @@ def logout():
     return redirect(url_for('login'))
 
 
+@app.route('/')
 @app.route('/notes', methods=['GET', 'POST'])
 @login_required
 def notes():
