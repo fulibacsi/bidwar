@@ -1,1 +1,1 @@
-web: python bidwar.py --host=0.0.0.0
+web: gunicorn app:bidwar --log-file=-
