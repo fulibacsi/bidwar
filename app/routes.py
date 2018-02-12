@@ -23,7 +23,7 @@ from app.forms import LoginForm
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('notes'))
+        return redirect(url_for('dashboard'))
     
     form = LoginForm()
     if form.validate_on_submit():
@@ -35,7 +35,7 @@ def login():
         
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('notes')
+            next_page = url_for('dashboard')
         return redirect(next_page)
     
     return render_template('login.html', title='Sign In', form=form)
@@ -47,7 +47,6 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/', methods=['GET', 'POST'])
 @app.route('/notes', methods=['GET', 'POST'])
 @login_required
 def notes():
@@ -58,3 +57,14 @@ def notes():
     posts = Note.query.all()
 
     return render_template('notes.html', title='Notes', posts=posts, form=form)
+
+
+@app.route('/')
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html', title='Dashboard')
+
+
+@app.route('/game')
+def game():
+    return render_template('game.html', title='Play')
