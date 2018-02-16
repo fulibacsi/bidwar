@@ -58,7 +58,31 @@ function create_move(type='', src='', target) {
     target.appendChild(img);
 }
 
+function set_moves() {
+    console.log('Moves setted!');
+    cycle_visibility('p1-place-bids');
+    cycle_visibility('p1-set-moves');
+}
 
 function change_bid(amount, target) {
-    // TODO : implement!
+    var act_bp = document.getElementById('p1-act-bp');
+    var act_bp_value = parseInt(act_bp.textContent);
+    target = document.getElementById(target);
+    var value = parseInt(target.textContent);
+    if (act_bp_value - amount >= 0) {
+        target.innerText = value + amount;
+        act_bp.innerText = act_bp_value - amount;
+    }
+}
+
+function cycle_visibility(target) {
+    target = document.getElementById(target);
+    target.classList.toggle('invisible');
+    target.classList.toggle('visible');
+}
+
+function submit_bids() {
+    console.log('Bids placed!');
+    cycle_visibility('p1-place-bids');
+    cycle_visibility('p1-set-moves');
 }
