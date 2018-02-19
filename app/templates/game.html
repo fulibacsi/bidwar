@@ -3,23 +3,11 @@
 {% block content %}
 <div class="container">
         <div id="p2-panel" class="row">
-            <div class="col">
-                <div class="row">
-                    <div class="col">
-                        <h3>AI</h3>
-                        <p>HP: <span id="p2-act-hp">10</span> / <span id="p2-max-hp">10</span></p>
-                        <p>BP: <span id="p2-act-bp">10</span> / <span id="p2-max-bp">10</span></p>
-                        <h3>AVAILABLE MOVES</h3>
-                    </div>
-                </div>
-                <div class="row">
-                        <div class="row">
-                            {% for i in range(1, 9) %}
-                            <div class="col-xs">
-                                <div id='p2-move-slot-{{ i }}' class="border" width=50 height=50>&nbsp;</div>
-                            </div>
-                            {% endfor %}
-                        </div>
+            <div class="row">
+                <div class="col">
+                    <h3>AI</h3>
+                    <p>HP: <span id="p2-act-hp">10</span> / <span id="p2-max-hp">10</span></p>
+                    <p>BP: <span id="p2-act-bp">10</span> / <span id="p2-max-bp">10</span></p>
                 </div>
             </div>
         </div>
@@ -29,11 +17,11 @@
         <div id="moves" class="row border">
             {% for i in range(1, 5) %}
             <div class="col-xs">
-                <button onclick="change_bid(amount=1, target='p1-bid-slot-{{ i }}')">+</button><br>
-                <label id="p2-bid-slot-{{ i }}">0</label><br>
-                <div id='move-slot-{{ i }}' class="border" ondrop="drop(event)" ondragover="allowDrop(event)" width=50 height=50>&nbsp;</div>
-                <label id="p1-bid-slot-{{ i }}">0</label><br>
-                <button onclick="change_bid(amount=-1, target='p1-bid-slot-{{ i }}')">-</button>
+                <button class="bidding-interface invisible" onclick="change_bid(amount=1, target='p1-bid-slot-{{ i }}')">+</button><br>
+                <label class="bidding-interface invisible" id="p2-bid-slot-{{ i }}">0</label><br>
+                <div id='move-slot-{{ i }}' class="border" width=50 height=50>&nbsp;</div>
+                <label class="bidding-interface invisible" id="p1-bid-slot-{{ i }}">0</label><br>
+                <button class="bidding-interface invisible" onclick="change_bid(amount=-1, target='p1-bid-slot-{{ i }}')">-</button>
             </div>
             {% endfor %}
         </div>
@@ -56,7 +44,7 @@
             <div class="row">
                 {% for i in range(1, 9) %}
                 <div class="col-xs">
-                    <div id='p1-move-slot-{{ i }}' class="border" width=50 height=50 ondragover="allowDrop(event)">&nbsp;</div>
+                    <div id='p1-move-slot-{{ i }}' class="border" width=50 height=50>&nbsp;</div>
                 </div>
                 {% endfor %}
             </div>
@@ -65,10 +53,8 @@
 </div>
 
 <script>
-    {% for p in range(1, 3) %}
     {% for move in ['atk', 'def', 'heal', 'buff'] * 2 %}
-    create_move(type = "{{ move }}", src=window.asset_dir + "/{{ move }}.png", target="p{{ p }}-move-slot-{{ loop.index }}");
-    {% endfor %}
+    create_move(type = "{{ move }}", target="p1-move-slot-{{ loop.index }}");
     {% endfor %}
 </script>
 {% endblock %}
