@@ -219,16 +219,10 @@ function evaluate() {
     // EXECUTE ACTIONS
     var number_of_moves = moves.length;
     for (i = 0; i < number_of_moves; i++) {
-        console.log('i: ', i);
-        console.log('before: ', moves)
         var index = random(0, moves.length - 1);
         var move = moves[index];
         moves.splice(index, 1);
-        console.log('index: ', index);
-        console.log('move: ', move);
-        console.log('after: ', moves);
-        console.log('---------------');
-
+        
         execute_move(move);
         
         if (PLAYER['hp'] == 0) {
