@@ -13,28 +13,27 @@
         </div>
     <hr>
     <h1>MOVES</h1>
-    <div id="main-panel" class="row">
-        <div id="moves" class="row border">
-            {% for i in range(1, 5) %}
-            <div class="col-xs">
-                <button class="bidding-interface invisible" onclick="change_bid(amount=1, target='p1-bid-slot-{{ i }}', bp_element='p1-act-bp')">+</button><br>
-                <label class="bidding-interface invisible bid-slot" id="p2-bid-slot-{{ i }}">0</label><br>
-                <div id='move-slot-{{ i }}' class="border" width=50 height=50>&nbsp;</div>
-                <label class="bidding-interface invisible bid-slot" id="p1-bid-slot-{{ i }}">0</label><br>
-                <button class="bidding-interface invisible" onclick="change_bid(amount=-1, target='p1-bid-slot-{{ i }}', bp_element='p1-act-bp')">-</button>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-    <div class="row">
-        <button id="p1-set-moves" onclick="set_moves()" class="visible">Set moves</button>
-        <button id="p1-place-bids" onclick="submit_bids()" class="invisible">Place bids</button>
-    </div>
-    <hr>
-    <div id="log-panel" class="row">
+    <div id="main-panel" class="row" style="height: 300px">
         <div class="col">
+            <div id="moves" class="row border" style="height: 220px">
+                {% for i in range(1, 5) %}
+                <div class="col-xs">
+                    <button class="bidding-interface invisible" onclick="change_bid(amount=1, target='p1-bid-slot-{{ i }}', bp_element='p1-act-bp')">+</button><br>
+                    <label class="bidding-interface invisible bid-slot" id="p2-bid-slot-{{ i }}">0</label><br>
+                    <div id='move-slot-{{ i }}' class="border" width=50 height=50>&nbsp;</div>
+                    <label class="bidding-interface invisible bid-slot" id="p1-bid-slot-{{ i }}">0</label><br>
+                    <button class="bidding-interface invisible" onclick="change_bid(amount=-1, target='p1-bid-slot-{{ i }}', bp_element='p1-act-bp')">-</button>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="row">
+                <button id="p1-set-moves" onclick="set_moves()" class="visible">Set moves</button>
+                <button id="p1-place-bids" onclick="submit_bids()" class="invisible">Place bids</button>
+            </div>
+        </div>
+        <div id="log-panel" class="col border" style="height: 220px">
             <h3>BATTLE LOG</h3><br>
-            <div id="log" class="pre-scrollable"></div>
+            <div id="log" class="pre-scrollable" style="height: 150px"></div>
         </div>
     </div>
     <hr>
