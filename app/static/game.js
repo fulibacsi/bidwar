@@ -49,6 +49,9 @@ var MOVES = {
     'buff': 1
 }
 
+var LOGMESSAGES = [];
+
+
 function random(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
 }
@@ -154,7 +157,7 @@ function clear_moves() {
 
 function init_player_moves() {
     log('TURN #' + TURN + ':');
-    for (i = 1; i < 9; i++) { 
+    for (i = 1; i < 9; i++) {
         create_move(select_move(), 'p1-move-slot-' + i);
     }
 }
@@ -176,12 +179,29 @@ function set_ai_bids() {
     }
 }
 
+function delay_animation () {
+    setTimeout( function() {
+        var node = LOGMESSAGES.shift();
+        if (node) {
+            document.getElementById('log').appendChild(node);
+        }
+    }, 200);
+}
+
+
 function log(message) {
-    var target = document.getElementById('log');
     var node = document.createElement("p");
-    var textnode = document.createTextNode(message);
-    node.appendChild(textnode);
-    target.appendChild(node);
+    node.classList.add('appear-anim');
+    node.innerHTML = message;
+    node.addEventListener("webkitAnimationEnd", delay_animation, false);
+    node.addEventListener("animationend", delay_animation, false);
+    node.addEventListener("oanimationend", delay_animation, false);
+    if (LOGMESSAGES.length) {
+        LOGMESSAGES.push(node);
+    } else {
+        LOGMESSAGES.push(node);
+        delay_animation();
+    }
 }
 
 function execute_move(move) {
@@ -189,7 +209,7 @@ function execute_move(move) {
     var target = user['name'] == 'player' ? AI : PLAYER;
     var action = move['action'];
     switch(action){
-        case 'buff': 
+        case 'buff':
             user['buff'] += MOVES['buff'];
             log(user['name'] + ' buffed itself. current buff level: ' + user['buff'] + '.');
             break;
@@ -220,13 +240,13 @@ function execute_move(move) {
 
 function evaluate() {
     var moves = [];
-    
+
     // PARSE MOVES AND BIDS
     for (i = 1; i < 5; i++) {
         var move = document.getElementById('move-slot-' + i).childNodes[0].getAttribute('type');
         var player_bid = parseInt(document.getElementById('p1-bid-slot-' + i).textContent);
         var ai_bid = parseInt(document.getElementById('p2-bid-slot-' + i).textContent);
-        
+
         if (player_bid > ai_bid) {
             moves.push({'user': PLAYER, 'action': move});
         } else if (player_bid < ai_bid) {
@@ -243,9 +263,9 @@ function evaluate() {
         var index = random(0, moves.length - 1);
         var move = moves[index];
         moves.splice(index, 1);
-        
+
         execute_move(move);
-        
+
         if (PLAYER['hp'] <= 0) {
             alert('player died. try again?');
             return 'death';
@@ -264,14 +284,14 @@ function set_moves() {
         log('Moves setted!');
 
         select_ai_moves();
-        
+
         var targets = Array.from(document.getElementsByClassName('bidding-interface'));
         targets.forEach( function(element) {
             cycle_visibility(element);
         });
         cycle_visibility(document.getElementById('p1-place-bids'));
         cycle_visibility(document.getElementById('p1-set-moves'));
-        
+
         var moves = Array.from(document.getElementsByClassName('move'));
         moves.forEach( function(element) { element.removeAttribute('onclick'); });
     }
@@ -279,10 +299,10 @@ function set_moves() {
 
 function submit_bids() {
     log('Bids placed!');
-    
+
     set_ai_bids();
     var result = evaluate();
-    
+
     if (result == 'death') {
         reset_game();
     } else {
@@ -298,7 +318,7 @@ function submit_bids() {
 
         cycle_visibility(document.getElementById('p1-place-bids'));
         cycle_visibility(document.getElementById('p1-set-moves'));
-        
+
         clear_moves();
         init_player_moves();
     }
@@ -306,7 +326,7 @@ function submit_bids() {
 
 function reset_game() {
     document.getElementById('log').innerHTML = '';
-    
+
     TURN = 1;
 
     PLAYER['hp'] = 10;
@@ -316,7 +336,7 @@ function reset_game() {
     PLAYER['def'] = 1;
     PLAYER['heal'] = 1;
     PLAYER['buff'] = 0;
-    
+
     AI['hp'] = 10;
     document.getElementById(AI['hp_element']).innerText = AI['hp'];
     document.getElementById('p2-act-bp').innerText = 10
@@ -351,5 +371,5 @@ function set_game_values() {
     document.getElementById('p2-max-hp').innerText = AI['def_hp'];
     document.getElementById('p2-act-bp').innerText = AI['def_bp'];
     document.getElementById('p2-max-bp').innerText = AI['def_bp'];
-    
+
 }

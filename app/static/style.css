@@ -1,0 +1,18 @@
+
+@keyframes nodeInserted {
+    from { opacity: 0.0; }
+    to { opacity: 1; }
+}
+
+.appear-anim {
+    animation-duration: 0.2s;
+    animation-name: nodeInserted;
+}
+
+p.appear-anim {
+    display: block;
+    -webkit-margin-before: 0em;
+    -webkit-margin-after: 0em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+}
