@@ -246,11 +246,11 @@ function evaluate() {
         
         execute_move(move);
         
-        if (PLAYER['hp'] == 0) {
-            log('player died. try again?');
+        if (PLAYER['hp'] <= 0) {
+            alert('player died. try again?');
             return 'death';
         }
-        if (AI['hp'] == 0) {
+        if (AI['hp'] <= 0) {
             alert('ai died. play again?');
             return 'death';
         }
@@ -304,7 +304,9 @@ function submit_bids() {
     }
 }
 
-function reset_game() { 
+function reset_game() {
+    document.getElementById('log').innerHTML = '';
+    
     TURN = 1;
 
     PLAYER['hp'] = 10;
