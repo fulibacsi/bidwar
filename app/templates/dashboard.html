@@ -3,4 +3,71 @@
 {% block content %}
 <h1>Hi {{ current_user.username }}!</h1>
 This is project BID<b style="color: red;">W</b>AR.
+
+
+<div class="container">
+    <div class="row">
+        <div class="col form-group">
+            <h2>PLAYER STATS</h2>
+            <label for="p1-hp">HP:</label>
+            <input type="text" class="form-control" id="p1-hp" value="10">
+
+            <label for="p1-bp">BP:</label>
+            <input type="text" class="form-control" id="p1-bp" value="10">
+
+            <label for="p1-atk">ATK:</label>
+            <input type="text" class="form-control" id="p1-atk" value="1">
+
+            <label for="p1-def">DEF:</label>
+            <input type="text" class="form-control" id="p1-def" value="1">
+
+            <label for="p1-heal">HEAL:</label>
+            <input type="text" class="form-control" id="p1-heal" value="1">
+
+            <label for="p1-buff">BUFF:</label>
+            <input type="text" class="form-control" id="p1-buff" value="0">
+        </div>
+
+        <div class="col form-group">
+            <h2>AI STATS</h2>
+            <label for="p2-hp">HP:</label>
+            <input type="text" class="form-control" id="p2-hp" value="10">
+
+            <label for="p2-bp">BP:</label>
+            <input type="text" class="form-control" id="p2-bp" value="10">
+
+            <label for="p2-atk">ATK:</label>
+            <input type="text" class="form-control" id="p2-atk" value="1">
+
+            <label for="p2-def">DEF:</label>
+            <input type="text" class="form-control" id="p2-def" value="1">
+
+            <label for="p2-heal">HEAL:</label>
+            <input type="text" class="form-control" id="p2-heal" value="1">
+
+            <label for="p2-buff">BUFF:</label>
+            <input type="text" class="form-control" id="p2-buff" value="0">
+        </div>
+
+        <div class="col form-group">
+            <h2>MOVE STATS</h2>
+            <label for="m-atk">ATK:</label>
+            <input type="text" class="form-control" id="m-atk" value="1">
+
+            <label for="m-def">DEF:</label>
+            <input type="text" class="form-control" id="m-def" value="1">
+
+            <label for="m-heal">HEAL:</label>
+            <input type="text" class="form-control" id="m-heal" value="1">
+
+            <label for="m-buff">BUFF:</label>
+            <input type="text" class="form-control" id="m-buff" value="1">
+        </div>
+    </div>
+    <div class="row">
+        <button type="submit" onclick="save_to_cookie();" class='btn btn-default'>SAVE VALUES</button>
+        <button onclick="load_to_form();" class='btn btn-default'>LOAD VALUES</button>
+    </div>
+</div>
+<hr>
 {% endblock %}

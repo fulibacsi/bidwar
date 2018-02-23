@@ -14,6 +14,7 @@
             window.asset_dir = "{{ url_for('static', filename='assets') }}";
             console.log('asset dir: ', window.asset_dir);
         </script>
+        <script src="{{ url_for('static', filename='cookies.js') }}"></script>
         <script src="{{ url_for('static', filename='game.js') }}"></script>
     </head>
     <body>

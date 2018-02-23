@@ -12,20 +12,41 @@ var PLAYER = {
     'name': 'player',
     'hp_element': 'p1-act-hp',
     'hp': 10,
+    'bp': 10,
     'atk': 1,
     'def': 1,
     'heal': 1,
-    'buff': 0
+    'buff': 0,
+    'def_hp': 10,
+    'def_bp': 10,
+    'def_atk': 1,
+    'def_def': 1,
+    'def_heal': 1,
+    'def_buff': 0
 }
 
 var AI = {
     'name': 'ai',
     'hp_element': 'p2-act-hp',
     'hp': 10,
+    'bp': 10,
     'atk': 1,
     'def': 1,
     'heal': 1,
-    'buff': 0
+    'buff': 0,
+    'def_hp': 10,
+    'def_bp': 10,
+    'def_atk': 1,
+    'def_def': 1,
+    'def_heal': 1,
+    'def_buff': 0
+}
+
+var MOVES = {
+    'atk': 1,
+    'def': 1,
+    'heal': 1,
+    'buff': 1
 }
 
 function random(min, max) {
@@ -169,29 +190,29 @@ function execute_move(move) {
     var action = move['action'];
     switch(action){
         case 'buff': 
-            user['buff']++;
+            user['buff'] += MOVES['buff'];
             log(user['name'] + ' buffed itself. current buff level: ' + user['buff'] + '.');
             break;
         case 'atk' :
-            damage = Math.max(0, 1 + user['atk'] + user['buff'] - target['def'] - target['buff']);
+            damage = Math.max(0, MOVES['atk'] + user['atk'] + user['buff'] - target['def'] - target['buff']);
             target['hp'] -= damage;
             document.getElementById(target['hp_element']).innerText = target['hp'];
-            user['buff'] = 0;
-            target['buff'] = 0;
-            target['def'] = 1;
+            user['buff'] = user['def_buff'];
+            target['buff'] = target['def_buff'];
+            target['def'] = target['def_def'];
             log(user['name'] + ' inflicted ' + damage + ' damage.');
             break;
         case 'def':
-            defense = 1 + user['buff'];
+            defense = MOVES['def'] + user['buff'];
             user['def'] += defense;
-            user['buff'] = 0;
+            user['buff'] = user['def_buff'];
             log(user['name'] + ' boosted it\'s defense to ' + user['def']);
             break;
         case 'heal':
-            heal = 1 + user['buff'];
-            user['hp'] = Math.min(10, user['hp'] + heal);
+            heal = MOVES['heal'] + user['buff'];
+            user['hp'] = Math.min(user['def_hp'], user['hp'] + heal);
             document.getElementById(user['hp_element']).innerText = user['hp'];
-            user['buff'] = 0;
+            user['buff'] = user['def_buff'];
             log(user['name'] + ' healed itself by ' + heal + ' points.');
             break;
     }
@@ -239,19 +260,21 @@ function evaluate() {
 }
 
 function set_moves() {
-    log('Moves setted!');
+    if (!find_target()) {
+        log('Moves setted!');
 
-    select_ai_moves();
-    
-    var targets = Array.from(document.getElementsByClassName('bidding-interface'));
-    targets.forEach( function(element) {
-        cycle_visibility(element);
-    });
-    cycle_visibility(document.getElementById('p1-place-bids'));
-    cycle_visibility(document.getElementById('p1-set-moves'));
-    
-    var moves = Array.from(document.getElementsByClassName('move'));
-    moves.forEach( function(element) { element.removeAttribute('onclick'); });
+        select_ai_moves();
+        
+        var targets = Array.from(document.getElementsByClassName('bidding-interface'));
+        targets.forEach( function(element) {
+            cycle_visibility(element);
+        });
+        cycle_visibility(document.getElementById('p1-place-bids'));
+        cycle_visibility(document.getElementById('p1-set-moves'));
+        
+        var moves = Array.from(document.getElementsByClassName('move'));
+        moves.forEach( function(element) { element.removeAttribute('onclick'); });
+    }
 }
 
 function submit_bids() {
@@ -270,8 +293,8 @@ function submit_bids() {
 
         var bidslots = Array.from(document.getElementsByClassName('bid-slot'));
         bidslots.forEach( function(element) { element.innerText = 0; } );
-        document.getElementById('p1-act-bp').innerText = 10
-        document.getElementById('p2-act-bp').innerText = 10
+        document.getElementById('p1-act-bp').innerText = PLAYER['bp'];
+        document.getElementById('p2-act-bp').innerText = AI['bp'];
 
         cycle_visibility(document.getElementById('p1-place-bids'));
         cycle_visibility(document.getElementById('p1-set-moves'));
@@ -300,6 +323,8 @@ function reset_game() {
     AI['heal'] = 1;
     AI['buff'] = 0;
 
+    set_game_values();
+
     clear_moves();
     init_player_moves();
 
@@ -310,4 +335,19 @@ function reset_game() {
 
     hide(document.getElementById('p1-place-bids'));
     show(document.getElementById('p1-set-moves'));
+}
+
+function set_game_values() {
+    load_values_from_cookie();
+
+    document.getElementById('p1-act-hp').innerText = PLAYER['def_hp'];
+    document.getElementById('p1-max-hp').innerText = PLAYER['def_hp'];
+    document.getElementById('p1-act-bp').innerText = PLAYER['def_bp'];
+    document.getElementById('p1-max-bp').innerText = PLAYER['def_bp'];
+
+    document.getElementById('p2-act-hp').innerText = AI['def_hp'];
+    document.getElementById('p2-max-hp').innerText = AI['def_hp'];
+    document.getElementById('p2-act-bp').innerText = AI['def_bp'];
+    document.getElementById('p2-max-bp').innerText = AI['def_bp'];
+    
 }
