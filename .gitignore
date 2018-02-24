@@ -1,3 +1,6 @@
+# DB files
+.db
+
 # VSCode project files
 .vscode
 

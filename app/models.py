@@ -7,12 +7,12 @@ from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
 
 
-class User(UserMixin, db.Model):
+class Users(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
-    notes = db.relationship('Note', backref='author', lazy='dynamic')
+    notes = db.relationship('Notes', backref='author', lazy='dynamic')
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -24,11 +24,11 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
 
-class Note(db.Model):
+class Notes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String(140))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    users_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     def __repr__(self):
         return '<Note {}>'.format(self.body)
@@ -36,11 +36,11 @@ class Note(db.Model):
 
 @login.user_loader
 def load_user(id):
-    return User.query.get(int(id))
+    return Users.query.get(int(id))
 
 
 def add_note(user_id, body):
-    note = Note(user_id=user_id, body=body)
+    note = Notes(user_id=users_id, body=body)
     db.session.add(note)
     db.session.commit()
     

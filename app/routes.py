@@ -12,8 +12,8 @@ from flask_login import login_required
 from werkzeug.urls import url_parse
 
 from app import app
-from app.models import User
-from app.models import Note
+from app.models import Users
+from app.models import Notes
 from app.models import add_note
 
 from app.forms import AddNote
@@ -27,7 +27,7 @@ def login():
     
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        user = Users.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('login'))
@@ -55,7 +55,7 @@ def notes():
     if form.validate_on_submit():
         add_note(user_id=current_user.id, body=form.body.data)
         return redirect(url_for('notes'))
-    posts = Note.query.all()
+    posts = Notes.query.all()
 
     return render_template('notes.html', title='Notes', posts=posts, form=form)
 
@@ -71,3 +71,11 @@ def dashboard():
 @login_required
 def game():
     return render_template('game.html', title='Play')
+
+@app.route('/init_db')
+@login_required
+def init_db():
+
+    
+
+    return redirect(url_for('dashboard'))
