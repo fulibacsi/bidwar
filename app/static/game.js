@@ -307,22 +307,29 @@ function submit_bids() {
     if (result == 'death') {
         reset_game();
     } else {
-        var targets = Array.from(document.getElementsByClassName('bidding-interface'));
-        targets.forEach( function(element) {
-            cycle_visibility(element);
-        });
-
-        var bidslots = Array.from(document.getElementsByClassName('bid-slot'));
-        bidslots.forEach( function(element) { element.innerText = 0; } );
-        document.getElementById('p1-act-bp').innerText = PLAYER['bp'];
-        document.getElementById('p2-act-bp').innerText = AI['bp'];
-
+        
         cycle_visibility(document.getElementById('p1-place-bids'));
-        cycle_visibility(document.getElementById('p1-set-moves'));
+        cycle_visibility(document.getElementById('next-round'));
 
-        clear_moves();
-        init_player_moves();
     }
+}
+
+function next_round() {
+    var targets = Array.from(document.getElementsByClassName('bidding-interface'));
+    targets.forEach( function(element) {
+        cycle_visibility(element);
+    });
+
+    var bidslots = Array.from(document.getElementsByClassName('bid-slot'));
+    bidslots.forEach( function(element) { element.innerText = 0; } );
+    document.getElementById('p1-act-bp').innerText = PLAYER['bp'];
+    document.getElementById('p2-act-bp').innerText = AI['bp'];
+
+    cycle_visibility(document.getElementById('next-round'));
+    cycle_visibility(document.getElementById('p1-set-moves'));
+
+    clear_moves();
+    init_player_moves();
 }
 
 function reset_game() {
