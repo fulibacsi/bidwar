@@ -183,7 +183,8 @@ function delay_animation () {
     setTimeout( function() {
         var node = LOGMESSAGES.shift();
         if (node) {
-            document.getElementById('log').appendChild(node);
+            var logdiv = document.getElementById('log');
+            logdiv.insertBefore(node, logdiv.firstChild);
         }
     }, 200);
 }
