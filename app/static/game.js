@@ -189,7 +189,6 @@ function delay_animation () {
     }, 200);
 }
 
-
 function log(message) {
     var node = document.createElement("p");
     node.classList.add('appear-anim');
