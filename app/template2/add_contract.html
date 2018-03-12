@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>BidWar</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom fonts for this template -->
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+
+    <!-- Plugin CSS -->
+    <link href="vendor/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css">
+
+    <!-- Custom styles for this template -->
+    <link href="css/style.css" rel="stylesheet">
+
+  </head>
+
+  <body id="page-top">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="#page-top">Bidwar</a>
+        <button class="navbar-toggler navbar-toggler-right text-uppercase bg-primary text-white rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item mx-0 mx-lg-1">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="game.html">Game</a>
+            </li>
+            <li class="nav-item mx-0 mx-lg-1">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="player_manager.html">Player Manager</a>
+            </li>
+            <li class="nav-item mx-0 mx-lg-1">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="contract_manager.html">Contract Manager</a>
+            </li>
+            <li class="nav-item mx-0 mx-lg-1">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="level_manager.html">Level Manager</a>
+            </li>
+            <li class="nav-item mx-0 mx-lg-1">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="notes.html">Notes</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <h3>Add New Contract</h3>
+        </div>
+    </div>
+   
+
+    <div class="container">
+      <form action="">
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+              <label for="inputName1">Player Name</label>
+            <input type="text" class="form-controll" id="inputName" placeholder="Player Name">
+          </div>
+        </div>
+          <div class="col">
+            <div class="form-group">
+                <label for="exampleFormControlFile1">Example file input</label>
+                <input type="file" class="form-control-file" id="exampleFormControlFile1">
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label for="inputName1">Player Level</label>
+              <input type="number" class="form-controll" id="inputName" placeholder="1">
+            </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="exampleFormControlSelect1">Category</label>
+            <select class="form-control" id="exampleFormControlSelect1">
+              <option>Attack</option>
+              <option>Defense</option>
+              <option>Heal</option>
+              <option>Buff</option>
+            </select>
+          </div>
+          <div class="col">
+              <div class="form-check">
+                  <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                  <label class="form-check-label" for="exampleCheck1">Exclusive Contract</label>
+              </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm">
+            <div class="form-group">
+                <label for="inputName1">Points</label>
+              <input type="number" class="form-controll" id="inputName" placeholder="1">
+            </div>
+        </div>
+        <div class="col-sm">
+            <div class="form-group">
+                <label for="exampleFormControlSelect1">Rarity</label>
+                <select class="form-control" id="exampleFormControlSelect1">
+                  <option>Common</option>
+                  <option>Uncommon</option>
+                  <option>Rare</option>
+                  <option>Epic</option>
+                  <option>Legendary</option>
+                  <option>Mythic</option>
+                </select>
+            </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <hr>
+        <div class="col-sm">
+          <div class="form-group">
+              <label for="exampleFormControlSelect1">Category</label>
+              <select class="form-control" id="exampleFormControlSelect1">
+                <option>Attack</option>
+                <option>Defense</option>
+                <option>Heal</option>
+                <option>Buff</option>
+              </select>
+            </div>      
+        </div>
+        <div class="col-sm">
+            <div class="form-group">
+                <label for="exampleFormControlSelect1">What to do</label>
+                <select class="form-control" id="exampleFormControlSelect1">
+                  <option>Add</option>
+                  <option>Remove</option>
+                  <option>Multiply</option>
+                  <option>Divide</option>
+                </select>
+              </div>      
+          </div>
+          <div class="col-sm">
+              <div class="form-group">
+                  <label for="inputName1">How much (points)</label>
+                <input type="number" class="form-controll" id="inputName" placeholder="1">
+              </div>   
+            </div>
+            <div class="col-sm">
+                <div class="form-group">
+                    <label for="exampleFormControlSelect1">To Who?</label>
+                    <select class="form-control" id="exampleFormControlSelect1">
+                      <option>Player</option>
+                      <option>Enemy</option>
+                    </select>
+                  </div>  
+              </div>
+              <div class="col-sm">
+                  <button type="submit" class="btn btn-secondary">Add</button>
+                </div>
+      </div>
+      <div class="row">
+        <hr>
+        <ul>
+          <li>Multiply Attack by 3 for Player <button type="submit" class="btn btn-light btn-sm">Remove</button> </li>
+          <li>Multiply Attack by 3 for Player <button type="submit" class="btn btn-light btn-sm">Remove</button> </li>
+
+        </ul>
+        <hr>
+      </div>
+      <div class="row">
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+       
+        </form>
+     
+      </form>
+
+
+ 
+    
+    </div>
+   
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+
+    <!-- Contact Form JavaScript -->
+    <script src="js/jqBootstrapValidation.js"></script>
+    <script src="js/contact_me.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/freelancer.min.js"></script>
+
+  </body>
+
+</html>
