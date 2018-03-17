@@ -51,8 +51,8 @@ var MOVES = {
 }
 
 var LOGMESSAGES = [];
-var PROGRESSBARS = {};
-var ai_timeout = null;
+var PROGRESSBAR = null;
+var ai_bids = {};
 
 
 function random(min, max) {
@@ -167,46 +167,66 @@ function init_player_moves() {
     }
 }
 
+function select_next_bid_target() {
+    var slots = Array.from(document.getElementsByClassName('move-slot'));
+    slots = slots.filter( slot => slot.getAttribute('evaluated') != 'true');
+    var selected = slots[random(0, slots.length - 1)];
+    console.log(slots, selected);
+    selected.setAttribute('allowed', 'true');
+    selected.classList.add('selected');
+    selected.childNodes[0].setAttribute('style', 'opacity: 1;');
+    console.log(selected);
+    return selected;
+}
+
+function start_progressbar(slot_number, position=1.0) {
+    console.log('progresbar started on slot ' + slot_number + '.');
+    PROGRESSBAR.set(position);
+    PROGRESSBAR.animate(0.0, {}, function() {
+        var move_slot = document.getElementById('move-slot-' + slot_number);
+        move_slot.setAttribute('allowed', "false");
+        move_slot.childNodes[0].removeAttribute('onclick');
+        evaluate(slot_number);
+    });
+}
+
 function change_bid(amount, target, bp_element) {
     var act_bp = document.getElementById(bp_element);
     var act_bp_value = parseInt(act_bp.textContent);
     target = document.getElementById(target);
     var move_number = parseInt(target.id.substr(target.id.length - 1));
     if (document.getElementById('move-slot-' + move_number).getAttribute('allowed') == "true") {
-        var bar = PROGRESSBARS['bid-progressbar-' + move_number];
         var value = parseInt(target.textContent);
         if (act_bp_value - amount >= 0) {
             target.innerText = value + amount;
             act_bp.innerText = act_bp_value - amount;
-
-            if (ai_timeout != null) { 
-                window.clearTimeout(ai_timeout);
-                set_ai_bids();
-                ai_timeout = null;
-            }
             
-            bar.set(1.0);
-            bar.animate(0.0, {}, function() {
-                var move_slot = document.getElementById('move-slot-' + move_number);
-                move_slot.setAttribute('allowed', "false");
-                console.log('move-slot-' + move_number + ':', move_slot.childNodes[0]);
-                move_slot.childNodes[0].removeAttribute('onclick');
-                evaluate(move_number);
-            });
+            var progress = Math.max(0.3, PROGRESSBAR.value());
+            start_progressbar(move_number, progress);
         }
     }
-    
 }
 
 function set_ai_bids() {
+    // REPLACE WITH SKYNET
+    ai_bids["p2-bid-slot-1"] = 0;
+    ai_bids["p2-bid-slot-2"] = 0;
+    ai_bids["p2-bid-slot-3"] = 0;
+    ai_bids["p2-bid-slot-4"] = 0;
     for (i = 0; i < 10; i++) {
-        setTimeout(function(){
-            // REPLACE WITH SKYNET 
-            change_bid(amount=1, 
-                       target="p2-bid-slot-" + random(1, 4), 
-                       bp_element='p2-act-bp'); 
-        }, 750 * (i+1));
+        ai_bids["p2-bid-slot-" + random(1, 4)]++;
     }
+}
+
+function excute_ai_bid(target) {
+    console.log('Workin on ', target, '.');
+    for (i = 0; i < ai_bids[target]; i++) {
+        setTimeout(function(){   
+            change_bid(amount=1, 
+                       target=target, 
+                       bp_element='p2-act-bp'); 
+        }, 250 + 500 * i);
+    }   
 }
 
 function log(message) {
@@ -254,8 +274,7 @@ function evaluate(slot) {
     console.log('evaluating move-slot-' + i + '...')
     var slot_element = document.getElementById('move-slot-' + slot);
     if (slot_element.getAttribute('evaluated') == "true") {
-        check_evaluation();
-        return TURN;
+        return check_evaluation();
     }
 
     var moves = [];
@@ -275,6 +294,7 @@ function evaluate(slot) {
     }
 
     slot_element.setAttribute('evaluated', "true");
+    slot_element.classList.remove('selected');
 
     // EXECUTE ACTIONS
     var number_of_moves = moves.length;
@@ -287,15 +307,20 @@ function evaluate(slot) {
 
         if (PLAYER['hp'] <= 0) {
             alert('player died. try again?');
-            reset_game();
+            return reset_game();
         }
         if (AI['hp'] <= 0) {
             alert('ai died. play again?');
-            reset_game();
+            return reset_game();
         }
     }
     console.log('evaluation done.')
-    check_evaluation();
+    if (!check_evaluation()) {
+        var selected = select_next_bid_target();
+        var target_slot_number = selected.id.substr(selected.id.length - 1);
+        start_progressbar(target_slot_number);
+        excute_ai_bid(target='p2-bid-slot-' + target_slot_number);
+    }
 }
 
 function check_evaluation() {
@@ -312,10 +337,11 @@ function check_evaluation() {
     if (evaluated == 4 | user_bp == 0 & ai_bp == 0) {
         TURN++;
         cycle_visibility(document.getElementById('next-round'));
+        return true;
     }
-    console.log('evaluation status check done.')
+    console.log('evaluation status check done.');
+    return false;
 }
-
 
 function set_moves() {
     if (!find_target()) {
@@ -338,18 +364,19 @@ function set_moves() {
                 var target = "p1-bid-slot-" + element.parentElement.id.substr(element.parentElement.id.length - 1);
                 console.log("handling: ", element.id, " - ", target);
                 element.setAttribute('onclick', "change_bid(amount=1, target='" + target + "', bp_element='p1-act-bp');");
+                element.setAttribute('allowed', 'false');
+                element.setAttribute('style', 'opacity: 0;');
             }
             
         });
 
-        ai_timeout = window.setTimeout(function(){ 
-            console.log("ALL HELL BROKEN  LOOOSE!!!");
-            set_ai_bids(); 
-        }, 2000);
-        console.log('TIMEOUT: ', ai_timeout);
+        set_ai_bids();
+        var selected = select_next_bid_target();
+        var target_slot_number = selected.id.substr(selected.id.length - 1);
+        start_progressbar(target_slot_number);
+        excute_ai_bid(target='p2-bid-slot-' + target_slot_number);
     }
 }
-
 
 function next_round() {
     GAMESTATE = "MOVE SELECTION";
@@ -372,10 +399,6 @@ function next_round() {
 
 function reset_game() {
     GAMESTATE = "MOVE SELECTION";
-    if (ai_timeout != null) { 
-        window.clearTimeout(ai_timeout);
-        ai_timeout = null;
-    }
 
     document.getElementById('log').innerHTML = '';
 
@@ -401,7 +424,6 @@ function reset_game() {
 
     clear_moves();
     init_player_moves();
-    // init_progress_bars();
 
     var targets = Array.from(document.getElementsByClassName('bidding-interface'));
     targets.forEach( function(element) { hide(element); });
@@ -426,36 +448,32 @@ function set_game_values() {
 
 }
 
-function init_progress_bars() {
-    PROGRESSBARS = {};
-    for (i = 1; i < 5; i++) {
-        var container = document.getElementById("bid-progressbar-" + i);
-        PROGRESSBARS["bid-progressbar-" + i] = (
-            new ProgressBar.Line(container, {
-                strokeWidth: 4,
-                easing: 'easeInOut',
-                duration: 1500,
-                color: '#009933',
-                trailColor: '#eee',
-                trailWidth: 1,
-                svgStyle: {height: '100%'},
-                from: {color: '#ff0000'},
-                to: {color: '#009933'},
-                step: (state, bar) => {
-                    bar.path.setAttribute('stroke', state.color);
-                }
-            })
-        );
+function init_progressbar() {
+    if (PROGRESSBAR == null) {
+        var container = document.getElementById("bid-progressbar");
+        PROGRESSBAR = new ProgressBar.Line(container, {
+            strokeWidth: 4,
+            easing: 'linear',
+            duration: 3000,
+            color: '#009933',
+            trailColor: '#eee',
+            trailWidth: 1,
+            svgStyle: {width: '100%', height: '100%'},
+            from: {color: '#ff0000'},
+            to: {color: '#009933'},
+            step: (state, bar) => {
+                bar.path.setAttribute('stroke', state.color);
+            }
+        });
     }
 }
-
 
 var gamestate = {
 
     init: function() {
         init_player_moves();
         set_game_values();
-        init_progress_bars();
+        init_progressbar();
     },
 
     state: "MOVE_SELECTION"
