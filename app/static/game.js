@@ -1,3 +1,4 @@
+var GAMESTATE = "MOVE SELECTION";
 
 var ASSETS = {
     'atk': window.asset_dir + "/atk.png",
@@ -6,7 +7,7 @@ var ASSETS = {
     'buff': window.asset_dir + "/buff.png"
 }
 
-TURN = 1;
+var TURN = 1;
 
 var PLAYER = {
     'name': 'player',
@@ -50,6 +51,8 @@ var MOVES = {
 }
 
 var LOGMESSAGES = [];
+var PROGRESSBARS = {};
+var ai_timeout = null;
 
 
 function random(min, max) {
@@ -152,6 +155,8 @@ function clear_moves() {
         var parent = element.parentNode;
         element.remove();
         parent.innerHTML = "&nbsp;";
+        parent.setAttribute('allowed', "true");
+        parent.setAttribute('evaluated', "false");
     });
 }
 
@@ -166,42 +171,49 @@ function change_bid(amount, target, bp_element) {
     var act_bp = document.getElementById(bp_element);
     var act_bp_value = parseInt(act_bp.textContent);
     target = document.getElementById(target);
-    var value = parseInt(target.textContent);
-    if (act_bp_value - amount >= 0) {
-        target.innerText = value + amount;
-        act_bp.innerText = act_bp_value - amount;
+    var move_number = parseInt(target.id.substr(target.id.length - 1));
+    if (document.getElementById('move-slot-' + move_number).getAttribute('allowed') == "true") {
+        var bar = PROGRESSBARS['bid-progressbar-' + move_number];
+        var value = parseInt(target.textContent);
+        if (act_bp_value - amount >= 0) {
+            target.innerText = value + amount;
+            act_bp.innerText = act_bp_value - amount;
+
+            if (ai_timeout != null) { 
+                window.clearTimeout(ai_timeout);
+                set_ai_bids();
+                ai_timeout = null;
+            }
+            
+            bar.set(1.0);
+            bar.animate(0.0, {}, function() {
+                var move_slot = document.getElementById('move-slot-' + move_number);
+                move_slot.setAttribute('allowed', "false");
+                console.log('move-slot-' + move_number + ':', move_slot.childNodes[0]);
+                move_slot.childNodes[0].removeAttribute('onclick');
+                evaluate(move_number);
+            });
+        }
     }
+    
 }
 
 function set_ai_bids() {
     for (i = 0; i < 10; i++) {
-        change_bid(amount=1, target="p2-bid-slot-" + random(1, 4), bp_element='p2-act-bp');
+        setTimeout(function(){
+            // REPLACE WITH SKYNET 
+            change_bid(amount=1, 
+                       target="p2-bid-slot-" + random(1, 4), 
+                       bp_element='p2-act-bp'); 
+        }, 750 * (i+1));
     }
-}
-
-function delay_animation () {
-    setTimeout( function() {
-        var node = LOGMESSAGES.shift();
-        if (node) {
-            var logdiv = document.getElementById('log');
-            logdiv.insertBefore(node, logdiv.firstChild);
-        }
-    }, 200);
 }
 
 function log(message) {
     var node = document.createElement("p");
-    node.classList.add('appear-anim');
     node.innerHTML = message;
-    node.addEventListener("webkitAnimationEnd", delay_animation, false);
-    node.addEventListener("animationend", delay_animation, false);
-    node.addEventListener("oanimationend", delay_animation, false);
-    if (LOGMESSAGES.length) {
-        LOGMESSAGES.push(node);
-    } else {
-        LOGMESSAGES.push(node);
-        delay_animation();
-    }
+    var logdiv = document.getElementById('log');
+    logdiv.insertBefore(node, logdiv.firstChild);
 }
 
 function execute_move(move) {
@@ -238,24 +250,31 @@ function execute_move(move) {
     }
 }
 
-function evaluate() {
+function evaluate(slot) {
+    console.log('evaluating move-slot-' + i + '...')
+    var slot_element = document.getElementById('move-slot-' + slot);
+    if (slot_element.getAttribute('evaluated') == "true") {
+        check_evaluation();
+        return TURN;
+    }
+
     var moves = [];
 
     // PARSE MOVES AND BIDS
-    for (i = 1; i < 5; i++) {
-        var move = document.getElementById('move-slot-' + i).childNodes[0].getAttribute('type');
-        var player_bid = parseInt(document.getElementById('p1-bid-slot-' + i).textContent);
-        var ai_bid = parseInt(document.getElementById('p2-bid-slot-' + i).textContent);
+    var move = slot_element.childNodes[0].getAttribute('type');
+    var player_bid = parseInt(document.getElementById('p1-bid-slot-' + slot).textContent);
+    var ai_bid = parseInt(document.getElementById('p2-bid-slot-' + slot).textContent);
 
-        if (player_bid > ai_bid) {
-            moves.push({'user': PLAYER, 'action': move});
-        } else if (player_bid < ai_bid) {
-            moves.push({'user': AI, 'action': move});
-        } else {
-            moves.push({'user': PLAYER, 'action': move});
-            moves.push({'user': AI, 'action': move});
-        }
+    if (player_bid > ai_bid) {
+        moves.push({'user': PLAYER, 'action': move});
+    } else if (player_bid < ai_bid) {
+        moves.push({'user': AI, 'action': move});
+    } else {
+        moves.push({'user': PLAYER, 'action': move});
+        moves.push({'user': AI, 'action': move});
     }
+
+    slot_element.setAttribute('evaluated', "true");
 
     // EXECUTE ACTIONS
     var number_of_moves = moves.length;
@@ -268,19 +287,39 @@ function evaluate() {
 
         if (PLAYER['hp'] <= 0) {
             alert('player died. try again?');
-            return 'death';
+            reset_game();
         }
         if (AI['hp'] <= 0) {
             alert('ai died. play again?');
-            return 'death';
+            reset_game();
         }
     }
-    TURN++;
-    return TURN;
+    console.log('evaluation done.')
+    check_evaluation();
 }
+
+function check_evaluation() {
+    console.log('checking evaluation status...');
+    var evaluated = 0;
+    for (i = 1; i < 5; i++) {
+        var slot_element = document.getElementById('move-slot-' + i);
+        if (slot_element.getAttribute('evaluated') == "true") { evaluated++; }
+    }
+
+    var user_bp = parseInt(document.getElementById('p1-act-bp').textContent);
+    var ai_bp = parseInt(document.getElementById('p2-act-bp').textContent);
+    
+    if (evaluated == 4 | user_bp == 0 & ai_bp == 0) {
+        TURN++;
+        cycle_visibility(document.getElementById('next-round'));
+    }
+    console.log('evaluation status check done.')
+}
+
 
 function set_moves() {
     if (!find_target()) {
+        GAMESTATE = "BIDDING";
         log('Moves setted!');
 
         select_ai_moves();
@@ -289,31 +328,31 @@ function set_moves() {
         targets.forEach( function(element) {
             cycle_visibility(element);
         });
-        cycle_visibility(document.getElementById('p1-place-bids'));
         cycle_visibility(document.getElementById('p1-set-moves'));
 
         var moves = Array.from(document.getElementsByClassName('move'));
-        moves.forEach( function(element) { element.removeAttribute('onclick'); });
+        moves.forEach( function(element) {
+            element.removeAttribute('onclick');
+            
+            if (!element.parentElement.id.includes('p1')) {
+                var target = "p1-bid-slot-" + element.parentElement.id.substr(element.parentElement.id.length - 1);
+                console.log("handling: ", element.id, " - ", target);
+                element.setAttribute('onclick', "change_bid(amount=1, target='" + target + "', bp_element='p1-act-bp');");
+            }
+            
+        });
+
+        ai_timeout = window.setTimeout(function(){ 
+            console.log("ALL HELL BROKEN  LOOOSE!!!");
+            set_ai_bids(); 
+        }, 2000);
+        console.log('TIMEOUT: ', ai_timeout);
     }
 }
 
-function submit_bids() {
-    log('Bids placed!');
-
-    set_ai_bids();
-    var result = evaluate();
-
-    if (result == 'death') {
-        reset_game();
-    } else {
-        
-        cycle_visibility(document.getElementById('p1-place-bids'));
-        cycle_visibility(document.getElementById('next-round'));
-
-    }
-}
 
 function next_round() {
+    GAMESTATE = "MOVE SELECTION";
     var targets = Array.from(document.getElementsByClassName('bidding-interface'));
     targets.forEach( function(element) {
         cycle_visibility(element);
@@ -332,6 +371,12 @@ function next_round() {
 }
 
 function reset_game() {
+    GAMESTATE = "MOVE SELECTION";
+    if (ai_timeout != null) { 
+        window.clearTimeout(ai_timeout);
+        ai_timeout = null;
+    }
+
     document.getElementById('log').innerHTML = '';
 
     TURN = 1;
@@ -356,13 +401,13 @@ function reset_game() {
 
     clear_moves();
     init_player_moves();
+    // init_progress_bars();
 
     var targets = Array.from(document.getElementsByClassName('bidding-interface'));
     targets.forEach( function(element) { hide(element); });
     var bidslots = Array.from(document.getElementsByClassName('bid-slot'));
     bidslots.forEach( function(element) { element.innerText = 0; } );
 
-    hide(document.getElementById('p1-place-bids'));
     show(document.getElementById('p1-set-moves'));
 }
 
@@ -379,4 +424,39 @@ function set_game_values() {
     document.getElementById('p2-act-bp').innerText = AI['def_bp'];
     document.getElementById('p2-max-bp').innerText = AI['def_bp'];
 
+}
+
+function init_progress_bars() {
+    PROGRESSBARS = {};
+    for (i = 1; i < 5; i++) {
+        var container = document.getElementById("bid-progressbar-" + i);
+        PROGRESSBARS["bid-progressbar-" + i] = (
+            new ProgressBar.Line(container, {
+                strokeWidth: 4,
+                easing: 'easeInOut',
+                duration: 1500,
+                color: '#009933',
+                trailColor: '#eee',
+                trailWidth: 1,
+                svgStyle: {height: '100%'},
+                from: {color: '#ff0000'},
+                to: {color: '#009933'},
+                step: (state, bar) => {
+                    bar.path.setAttribute('stroke', state.color);
+                }
+            })
+        );
+    }
+}
+
+
+var gamestate = {
+
+    init: function() {
+        init_player_moves();
+        set_game_values();
+        init_progress_bars();
+    },
+
+    state: "MOVE_SELECTION"
 }

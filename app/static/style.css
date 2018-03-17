@@ -16,3 +16,9 @@ p.appear-anim {
     -webkit-margin-start: 0px;
     -webkit-margin-end: 0px;
 }
+
+div.progressbar {
+    margin: 5px;
+    width: 50px;
+    height: 5px;
+}

@@ -1,5 +1,5 @@
 # DB files
-.db
+*.db
 
 # VSCode project files
 .vscode

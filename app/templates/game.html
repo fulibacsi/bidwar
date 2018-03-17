@@ -8,17 +8,15 @@
             <div id="moves" class="row border" style="height: 220px">
                 {% for i in range(1, 5) %}
                 <div class="col-xs">
-                    <button class="bidding-interface btn btn-default invisible" onclick="change_bid(amount=1, target='p1-bid-slot-{{ i }}', bp_element='p1-act-bp')">+</button><br>
                     <label class="bidding-interface invisible bid-slot" id="p2-bid-slot-{{ i }}">0</label><br>
-                    <div id='move-slot-{{ i }}' class="border" style="width: 50px; height: 50px;">&nbsp;</div>
+                    <div id='move-slot-{{ i }}' class="border" allowed="true" evaluated="false" style="width: 50px; height: 50px;">&nbsp;</div>
                     <label class="bidding-interface invisible bid-slot" id="p1-bid-slot-{{ i }}">0</label><br>
-                    <button class="bidding-interface btn btn-default invisible" onclick="change_bid(amount=-1, target='p1-bid-slot-{{ i }}', bp_element='p1-act-bp')">-</button>
+                    <div id="bid-progressbar-{{ i }}" class="bidding-interface invisible"></div>
                 </div>
                 {% endfor %}
             </div>
             <div class="row">
                 <button id="p1-set-moves" onclick="set_moves()" class="btn btn-default visible">Set moves</button>
-                <button id="p1-place-bids" onclick="submit_bids()" class="btn btn-default invisible">Place bids</button>
                 <button id="next-round" onclick="next_round()" class="btn btn-default invisible">Next round</button>
             </div>
         </div>
@@ -61,7 +59,9 @@
 </div>
 
 <script>
+    console.log('IT HAS BEGUN!');
     init_player_moves();
     set_game_values();
+    init_progress_bars();
 </script>
 {% endblock %}
